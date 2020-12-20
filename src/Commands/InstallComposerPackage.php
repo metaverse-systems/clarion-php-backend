@@ -39,7 +39,7 @@ class InstallComposerPackage extends Command
      */
     public function handle()
     {
-        $packages = [];
+        $packages = [ "mouf/nodejs-installer" ];
         $run_install = $this->composerRequire($packages);
         if($run_install) $this->composerInstall();
         return 0;
