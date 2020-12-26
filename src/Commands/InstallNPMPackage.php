@@ -43,7 +43,7 @@ class InstallNPMPackage extends Command
           "dependencies": {
             "@babel/plugin-proposal-class-properties": "^7.10.1",
             "react-router-dom": "^5.2.0",
-            "@material-ui/core": "^4.10.1"
+            "@material-ui/core": "^4.11.2"
           }
         }');
     }
@@ -104,6 +104,6 @@ class InstallNPMPackage extends Command
 
     private function npmInstall()
     {
-        exec("npm i");
+        exec(base_path("vendor/bin/npm i"));
     }
 }

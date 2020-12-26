@@ -6,21 +6,21 @@ use Illuminate\Console\Command;
 use Composer\Composer;
 use Composer\Installer;
 
-class SetupClarion extends Command
+class BuildFrontend extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'clarion:setup';
+    protected $signature = 'clarion:frontend-build';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Configure Clarion';
+    protected $description = 'Rebuild frontend';
 
     /**
      * Create a new command instance.
@@ -39,13 +39,9 @@ class SetupClarion extends Command
      */
     public function handle()
     {
-        \Artisan::call('vendor:publish', [
-            '--provider' => 'MetaverseSystems\ClarionPHPBackend\ClarionPHPBackendProvider',
-            '--force' => true
-        ]);
-
-        \Artisan::call('clarion:npm-install');
-        \Artisan::call('clarion:frontend-build');
+        \Artisan::call('clarion:routes-build');
+        \Artisan::call('clarion:links-build');
+        exec(base_path("vendor/bin/npm run prod"));
         return 0;
     }
 }
