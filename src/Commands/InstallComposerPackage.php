@@ -39,7 +39,7 @@ class InstallComposerPackage extends Command
      */
     public function handle()
     {
-        $packages = [];
+        $packages = [ ];
         $run_install = $this->composerRequire($packages);
         if($run_install) $this->composerInstall();
         return 0;
@@ -51,7 +51,7 @@ class InstallComposerPackage extends Command
 
         $laravel_composer = json_decode(file_get_contents(base_path('composer.json')));
 
-        foreach($this->composer_packages as $name=>$version)
+        foreach($packages as $name=>$version)
         {
             $installed = \Composer\InstalledVersions::isInstalled($name);
             if($installed)
