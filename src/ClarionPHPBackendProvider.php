@@ -37,10 +37,16 @@ class ClarionPHPBackendProvider extends ServiceProvider
     public function boot()
     {
         $this->loadViewsFrom(__DIR__.'/Views', 'clarion');
+        $this->loadMigrationsFrom(__DIR__.'/Migrations');
 
         $this->publishes([
             __DIR__.'/files' => base_path(),
         ]);
+
+        if(!$this->app->routesAreCached())
+        {
+            require __DIR__.'/Routes.php';
+        }
 
         \App::booted(function() {
             app('router')->get('/', function() { return view("clarion::index"); })->middleware('web');

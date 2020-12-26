@@ -44,6 +44,7 @@ class SetupClarion extends Command
             '--force' => true
         ]);
 
+        \Artisan::call('migrate');
         \Artisan::call('clarion:npm-install');
         \Artisan::call('clarion:frontend-build');
         return 0;
