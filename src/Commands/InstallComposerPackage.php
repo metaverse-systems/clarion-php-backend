@@ -5,6 +5,7 @@ namespace MetaverseSystems\ClarionPHPBackend\Commands;
 use Illuminate\Console\Command;
 use Composer\Composer;
 use Composer\Installer;
+use MetaverseSystems\ClarionPHPBackend\Models\ComposerPackage;
 
 class InstallComposerPackage extends Command
 {
@@ -39,9 +40,11 @@ class InstallComposerPackage extends Command
      */
     public function handle()
     {
-        $packages = [ ];
-        $run_install = $this->composerRequire($packages);
-        if($run_install) $this->composerInstall();
+        $packages = ComposerPackage::whereNull('installed_at')->get();
+        if($this->composerRequire($packages))
+        {
+            $this->composerInstall();
+        }
         return 0;
     }
 
@@ -51,17 +54,19 @@ class InstallComposerPackage extends Command
 
         $laravel_composer = json_decode(file_get_contents(base_path('composer.json')));
 
-        foreach($packages as $name=>$version)
+        foreach($packages as $package)
         {
-            $installed = \Composer\InstalledVersions::isInstalled($name);
+            $installed = \Composer\InstalledVersions::isInstalled($package->name);
             if($installed)
             {
-                print "$name is installed.\n";
+                print $package->name." is installed.\n";
                 continue;
             }
 
             $run_install = true;
-            $laravel_composer->require->$name = $version;
+            $package->installed_at = date('Y-m-d H:i:s');
+            $package->save();
+            $laravel_composer->require->{$package->name} = $package->version;
         }
 
         if(!$run_install) return false;

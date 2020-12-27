@@ -3,7 +3,9 @@
 namespace MetaverseSystems\ClarionPHPBackend;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Console\Scheduling\Schedule;
 use MetaverseSystems\ClarionPHPBackend\Commands\SetupClarion;
+use MetaverseSystems\ClarionPHPBackend\Commands\MigrateClarion;
 use MetaverseSystems\ClarionPHPBackend\Commands\BuildFrontend;
 use MetaverseSystems\ClarionPHPBackend\Commands\BuildReactRoutes;
 use MetaverseSystems\ClarionPHPBackend\Commands\BuildReactLinks;
@@ -21,6 +23,7 @@ class ClarionPHPBackendProvider extends ServiceProvider
     {
         $this->commands([
             SetupClarion::class,
+            MigrateClarion::class,
             BuildFrontend::class,
             BuildReactRoutes::class,
             BuildReactlinks::class,
@@ -37,14 +40,26 @@ class ClarionPHPBackendProvider extends ServiceProvider
     public function boot()
     {
         $this->loadViewsFrom(__DIR__.'/Views', 'clarion');
+        $this->loadMigrationsFrom(__DIR__.'/Migrations');
 
         $this->publishes([
             __DIR__.'/files' => base_path(),
         ]);
 
+        if(!$this->app->routesAreCached())
+        {
+            require __DIR__.'/Routes.php';
+        }
+
         \App::booted(function() {
             app('router')->get('/', function() { return view("clarion::index"); })->middleware('web');
             app('router')->get('/{any}', function() { return view("clarion::index"); })->middleware('web')->where('any', '^.*$');
+        });
+
+        $this->app->booted(function () {
+            $schedule = app(Schedule::class);
+            $schedule->command('clarion:migrate')->everyMinute();
+            $schedule->command('clarion:composer-install')->everyMinute();
         });
     }
 }

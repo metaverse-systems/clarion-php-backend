@@ -5,6 +5,7 @@ namespace MetaverseSystems\ClarionPHPBackend\Commands;
 use Illuminate\Console\Command;
 use Composer\Composer;
 use Composer\Installer;
+use MetaverseSystems\ClarionPHPBackend\Models\NPMPackage;
 
 class SetupClarion extends Command
 {
@@ -22,6 +23,8 @@ class SetupClarion extends Command
      */
     protected $description = 'Configure Clarion';
 
+    private $npm;
+
     /**
      * Create a new command instance.
      *
@@ -30,6 +33,19 @@ class SetupClarion extends Command
     public function __construct()
     {
         parent::__construct();
+
+        $this->npm = json_decode('{
+          "devDependencies": {
+            "@babel/preset-react": "^7.10.1",
+            "react": "^16.13.1",
+            "react-dom": "^16.13.1"
+          },
+          "dependencies": {
+            "@babel/plugin-proposal-class-properties": "^7.10.1",
+            "react-router-dom": "^5.2.0",
+            "@material-ui/core": "^4.11.2"
+          }
+        }');
     }
 
     /**
@@ -43,6 +59,25 @@ class SetupClarion extends Command
             '--provider' => 'MetaverseSystems\ClarionPHPBackend\ClarionPHPBackendProvider',
             '--force' => true
         ]);
+
+        \Artisan::call('migrate');
+
+        foreach($this->npm->devDependencies as $name=>$version)
+        {
+            $p = new NPMPackage;
+            $p->dep_type = "devDependency";
+            $p->name = $name;
+            $p->version = $version;
+            $p->save();
+        }
+
+        foreach($this->npm->dependencies as $name=>$version)
+        {
+            $p = new NPMPackage;
+            $p->name = $name;
+            $p->version = $version;
+            $p->save();
+        }
 
         \Artisan::call('clarion:npm-install');
         \Artisan::call('clarion:frontend-build');
