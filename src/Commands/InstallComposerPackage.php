@@ -82,7 +82,5 @@ class InstallComposerPackage extends Command
         $composer = \Composer\Factory::create($io, base_path('composer.json'));
         $installer = \Composer\Installer::create($io, $composer);
         $installer->setUpdate(true)->run();
-
-        \Artisan::call('migrate');
     }
 }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateComposerPackagesTable extends Migration
+class CreateNPMPackagesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,14 @@ class CreateComposerPackagesTable extends Migration
      */
     public function up()
     {
-        Schema::create('composer_packages', function (Blueprint $table) {
+        Schema::create('npm_packages', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
             $table->integer('app_install_id')->nullable();
             $table->string('name');
             $table->string('version');
             $table->timestamp('installed_at')->nullable();
-            $table->boolean('migration_waiting')->default(true);
+            $table->string('dep_type')->default('dependency');
         });
     }
 
@@ -31,6 +31,6 @@ class CreateComposerPackagesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('composer_packages');
+        Schema::dropIfExists('npm_packages');
     }
 }

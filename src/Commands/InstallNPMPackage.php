@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Composer\Composer;
 use Composer\Installer;
 use stdClass;
+use MetaverseSystems\ClarionPHPBackend\Models\NPMPackage;
 
 class InstallNPMPackage extends Command
 {
@@ -23,8 +24,6 @@ class InstallNPMPackage extends Command
      */
     protected $description = 'Install queued NPM packages';
 
-    protected $npm;
-
     /**
      * Create a new command instance.
      *
@@ -33,19 +32,6 @@ class InstallNPMPackage extends Command
     public function __construct()
     {
         parent::__construct();
-
-        $this->npm = json_decode('{
-          "devDependencies": {
-            "@babel/preset-react": "^7.10.1",
-            "react": "^16.13.1",
-            "react-dom": "^16.13.1"
-          },
-          "dependencies": {
-            "@babel/plugin-proposal-class-properties": "^7.10.1",
-            "react-router-dom": "^5.2.0",
-            "@material-ui/core": "^4.11.2"
-          }
-        }');
     }
 
     /**
@@ -55,7 +41,10 @@ class InstallNPMPackage extends Command
      */
     public function handle()
     {
-        if($this->npmRequire($this->npm))
+        $packages = new stdClass;
+        $packages->dependencies = NPMPackage::whereNull('installed_at')->where('dep_type', 'dependency')->get();
+        $packages->devDependencies = NPMPackage::whereNull('installed_at')->where('dep_type', 'devDependency')->get();
+        if($this->npmRequire($packages))
         {
             $this->npmInstall();
         }
@@ -70,30 +59,34 @@ class InstallNPMPackage extends Command
         if(!isset($laravel_package->devDependencies)) $laravel_package->devDependencies = new \stdClass;
         if(!isset($laravel_package->dependencies)) $laravel_package->dependencies = new \stdClass;
 
-        foreach($packages->devDependencies as $name=>$version)
+        foreach($packages->devDependencies as $package)
         {
-            $installed = isset($laravel_package->devDependencies->$name);
+            $installed = isset($laravel_package->devDependencies->{$package->name});
             if($installed)
             {
-                print "$name is installed.\n";
+                print $package->name." is installed.\n";
                 continue;
             }
 
             $run_install = true;
-            $laravel_package->devDependencies->$name = $version;
+            $package->installed_at = date('Y-m-d H:i:s');
+            $package->save();
+            $laravel_package->devDependencies->{$package->name} = $package->version;
         }
 
-        foreach($packages->dependencies as $name=>$version)
+        foreach($packages->dependencies as $package)
         {
-            $installed = isset($laravel_package->dependencies->$name);
+            $installed = isset($laravel_package->dependencies->{$package->name});
             if($installed)
             {
-                print "$name is installed.\n";
+                print $package->name." is installed.\n";
                 continue;
             }
 
             $run_install = true;
-            $laravel_package->dependencies->$name = $version;
+            $package->installed_at = date('Y-m-d H:i:s');
+            $package->save();
+            $laravel_package->dependencies->{$package->name} = $package->version;
         }
 
         if(!$run_install) return false;
