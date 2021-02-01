@@ -45,9 +45,10 @@ class StoreAppController extends \App\Http\Controllers\Controller
      * @param  StoreApp  $storeApp
      * @return \Illuminate\Http\Response
      */
-    public function show(StoreApp $storeApp)
+    public function show($id)
     {
-        //
+        $storeApp = StoreApp::find($id)->with('packages')->get();
+        return $storeApp;
     }
 
     /**

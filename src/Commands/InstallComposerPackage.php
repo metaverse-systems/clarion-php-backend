@@ -43,7 +43,7 @@ class InstallComposerPackage extends Command
         $packages = ComposerPackage::whereNull('installed_at')->get();
         if($this->composerRequire($packages))
         {
-            $this->composerInstall();
+            $this->composerInstall($packages);
         }
         return 0;
     }

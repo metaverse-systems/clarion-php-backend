@@ -10,4 +10,5 @@ Route::group(['middleware'=>['api'], 'prefix'=>'api' ], function () {
     Route::post('package/npm', 'MetaverseSystems\ClarionPHPBackend\Controllers\NPMPackageController@store');
 
     Route::get('app', 'MetaverseSystems\ClarionPHPBackend\Controllers\StoreAppController@index');
+    Route::get('app/{id}', 'MetaverseSystems\ClarionPHPBackend\Controllers\StoreAppController@show');
 });

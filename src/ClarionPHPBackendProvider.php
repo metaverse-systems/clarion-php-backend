@@ -11,6 +11,8 @@ use MetaverseSystems\ClarionPHPBackend\Commands\BuildReactRoutes;
 use MetaverseSystems\ClarionPHPBackend\Commands\BuildReactLinks;
 use MetaverseSystems\ClarionPHPBackend\Commands\InstallComposerPackage;
 use MetaverseSystems\ClarionPHPBackend\Commands\InstallNPMPackage;
+use MetaverseSystems\ClarionPHPBackend\Commands\SyncStoreApps;
+use MetaverseSystems\ClarionPHPBackend\Commands\WatchPackageQueue;
 
 class ClarionPHPBackendProvider extends ServiceProvider
 {
@@ -28,7 +30,9 @@ class ClarionPHPBackendProvider extends ServiceProvider
             BuildReactRoutes::class,
             BuildReactlinks::class,
             InstallComposerPackage::class,
-            InstallNPMPackage::class
+            InstallNPMPackage::class,
+            SyncStoreApps::class,
+            WatchPackageQueue::class
         ]);
     }
 
@@ -59,7 +63,7 @@ class ClarionPHPBackendProvider extends ServiceProvider
         $this->app->booted(function () {
             $schedule = app(Schedule::class);
             $schedule->command('clarion:migrate')->everyMinute();
-            $schedule->command('clarion:composer-install')->everyMinute();
+            $schedule->command('clarion:watch-package-queue')->everyMinute();
         });
     }
 }
