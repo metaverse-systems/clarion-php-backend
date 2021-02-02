@@ -17,7 +17,6 @@ class CreateStoreAppPackagesTable extends Migration
             $table->id();
             $table->timestamps();
             $table->integer('app_id');
-            $table->integer('batch');
             $table->string('type');
             $table->string('organization');
             $table->string('name');

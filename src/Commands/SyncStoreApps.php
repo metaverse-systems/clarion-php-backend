@@ -80,7 +80,6 @@ class SyncStoreApps extends Command
                 $p->organization = $name[0];
                 $p->name = $name[1];
                 $p->version = $package->version;
-                $p->batch = $package->batch;
                 $p->save();
             }
         }
