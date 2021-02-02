@@ -47,6 +47,7 @@ class InstallNPMPackage extends Command
         if($this->npmRequire($packages))
         {
             $this->npmInstall();
+            \Artisan::call('clarion:frontend-build');
         }
         return 0;
     }

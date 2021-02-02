@@ -42,10 +42,11 @@ class WatchPackageQueue extends Command
      */
     public function handle()
     {
-        for($i = 0; $i < 10; $i++)
+        for($i = 0; $i < 5; $i++)
         {
             \Artisan::call('clarion:composer-install');
-            sleep(5);
+            \Artisan::call('clarion:npm-install');
+            sleep(10);
         }
         return 0;
     }

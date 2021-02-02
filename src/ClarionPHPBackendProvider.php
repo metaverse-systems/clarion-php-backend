@@ -64,6 +64,7 @@ class ClarionPHPBackendProvider extends ServiceProvider
             $schedule = app(Schedule::class);
             $schedule->command('clarion:migrate')->everyMinute();
             $schedule->command('clarion:watch-package-queue')->everyMinute();
+            $schedule->command('clarion:apps-sync')->hourly();
         });
     }
 }
