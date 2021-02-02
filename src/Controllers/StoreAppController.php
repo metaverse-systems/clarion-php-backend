@@ -77,10 +77,10 @@ class StoreAppController extends \App\Http\Controllers\Controller
         switch($action)
         {
             case "install":
-                $this->install($id);
+                return $this->install($id);
                 break;
             case "uninstall":
-                $this->uninstall($id);
+                return $this->uninstall($id);
                 break;
             default:
                 // ERROR: Unknown action
@@ -114,10 +114,16 @@ class StoreAppController extends \App\Http\Controllers\Controller
                     break;
             }
         }
+
+        $storeApp->installed_at = date("Y-m-d H:i:s");
+        $storeApp->save();
+        return $storeApp;
     }
 
     private function uninstall($id)
     {
+        $storeApp = StoreApp::find($id)->with('packages')->first();
+        return $storeApp;
     }
 
     /**
