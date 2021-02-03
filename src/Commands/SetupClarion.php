@@ -43,7 +43,8 @@ class SetupClarion extends Command
           "dependencies": {
             "@babel/plugin-proposal-class-properties": "^7.10.1",
             "react-router-dom": "^5.2.0",
-            "@material-ui/core": "^4.11.2"
+            "@material-ui/core": "^4.11.2",
+            "@metaverse-systems/clarion-store-gui": "*"
           }
         }');
     }
