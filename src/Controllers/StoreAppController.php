@@ -4,6 +4,8 @@ namespace MetaverseSystems\ClarionPHPBackend\Controllers;
 
 use MetaverseSystems\ClarionPHPBackend\Models\StoreApp;
 use MetaverseSystems\ClarionPHPBackend\Models\StoreAppPackage;
+use MetaverseSystems\ClarionPHPBackend\Models\NPMPackage;
+use MetaverseSystems\ClarionPHPBackend\Models\ComposerPackage;
 use Illuminate\Http\Request;
 
 class StoreAppController extends \App\Http\Controllers\Controller
@@ -47,7 +49,7 @@ class StoreAppController extends \App\Http\Controllers\Controller
      */
     public function show($id)
     {
-        $storeApp = StoreApp::find($id)->with('packages')->get();
+        $storeApp = StoreApp::find($id)->with('packages')->first();
         return $storeApp;
     }
 
@@ -66,12 +68,62 @@ class StoreAppController extends \App\Http\Controllers\Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  StoreApp  $storeApp
+     * @param  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, StoreApp $storeApp)
+    public function update(Request $request, $id)
     {
-        //
+        $action = $request->input('action');
+        switch($action)
+        {
+            case "install":
+                return $this->install($id);
+                break;
+            case "uninstall":
+                return $this->uninstall($id);
+                break;
+            default:
+                // ERROR: Unknown action
+                break;
+        }
+    }
+
+    private function install($id)
+    {
+        $storeApp = StoreApp::find($id)->with('packages')->first();
+        foreach($storeApp->packages as $package)
+        {
+            switch($package->type)
+            {
+                case "composer":
+                    $c = new ComposerPackage;
+                    $c->app_install_id = $package->app_id;
+                    $c->name = $package->organization."/".$package->name;
+                    $c->version = $package->version;
+                    $c->save();
+                    break;
+                case "npm":
+                    $n = new NPMPackage;
+                    $n->app_install_id = $package->app_id;
+                    $n->name = $package->organization."/".$package->name;
+                    $n->version = $package->version;
+                    $n->save();
+                    break;
+                default:
+                    // ERROR: Unknown package type 
+                    break;
+            }
+        }
+
+        $storeApp->installed_at = date("Y-m-d H:i:s");
+        $storeApp->save();
+        return $storeApp;
+    }
+
+    private function uninstall($id)
+    {
+        $storeApp = StoreApp::find($id)->with('packages')->first();
+        return $storeApp;
     }
 
     /**
