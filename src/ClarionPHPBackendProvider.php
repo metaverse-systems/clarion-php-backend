@@ -13,6 +13,7 @@ use MetaverseSystems\ClarionPHPBackend\Commands\InstallComposerPackage;
 use MetaverseSystems\ClarionPHPBackend\Commands\InstallNPMPackage;
 use MetaverseSystems\ClarionPHPBackend\Commands\SyncStoreApps;
 use MetaverseSystems\ClarionPHPBackend\Commands\WatchPackageQueue;
+use MetaverseSystems\ClarionPHPBackend\Commands\SetupCron;
 
 class ClarionPHPBackendProvider extends ServiceProvider
 {
@@ -32,7 +33,8 @@ class ClarionPHPBackendProvider extends ServiceProvider
             InstallComposerPackage::class,
             InstallNPMPackage::class,
             SyncStoreApps::class,
-            WatchPackageQueue::class
+            WatchPackageQueue::class,
+            SetupCron::class
         ]);
     }
 
