@@ -83,6 +83,7 @@ class SetupClarion extends Command
         \Artisan::call('clarion:npm-install');
         \Artisan::call('clarion:frontend-build');
         \Artisan::call('clarion:apps-sync');
+        \Artisan::call('clarion:cron-setup');
         return 0;
     }
 }
