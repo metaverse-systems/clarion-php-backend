@@ -56,6 +56,15 @@ class SetupClarion extends Command
      */
     public function handle()
     {
+        $node = env('CLARION_NODE');
+        if(strlen($node) == 0)
+        {
+            $node = \Str::uuid();
+            $env = file_get_contents(base_path()."/.env");
+            $env.= "CLARION_NODE=$node\n";
+            file_put_contents(base_path()."/.env", $env);
+        }
+
         \Artisan::call('vendor:publish', [
             '--provider' => 'MetaverseSystems\ClarionPHPBackend\ClarionPHPBackendProvider',
             '--force' => true
