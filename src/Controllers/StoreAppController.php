@@ -49,7 +49,7 @@ class StoreAppController extends \App\Http\Controllers\Controller
      */
     public function show($id)
     {
-        $storeApp = StoreApp::find($id)->with('packages')->first();
+        $storeApp = StoreApp::with('packages')->find($id);
         return $storeApp;
     }
 
@@ -83,6 +83,7 @@ class StoreAppController extends \App\Http\Controllers\Controller
                 return $this->uninstall($id);
                 break;
             default:
+                return response()->json(["error"=>"Unknown action $action"], 400);
                 // ERROR: Unknown action
                 break;
         }
@@ -90,7 +91,7 @@ class StoreAppController extends \App\Http\Controllers\Controller
 
     private function install($id)
     {
-        $storeApp = StoreApp::find($id)->with('packages')->first();
+        $storeApp = StoreApp::with('packages')->find($id);
         foreach($storeApp->packages as $package)
         {
             switch($package->type)
