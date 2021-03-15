@@ -44,6 +44,7 @@ class SetupClarion extends Command
             "@babel/plugin-proposal-class-properties": "^7.10.1",
             "react-router-dom": "^5.2.0",
             "@material-ui/core": "^4.11.2",
+            "pusher-js": "^7.0.3",
             "@metaverse-systems/clarion-store-gui": "*"
           }
         }');
@@ -64,6 +65,30 @@ class SetupClarion extends Command
             $env.= "CLARION_NODE=$node\n";
             file_put_contents(base_path()."/.env", $env);
         }
+
+        $env = explode('\n', file_get_contents(base_path()."/.env"));
+        foreach($env as $k=>$v)
+        {
+            $line = explode('=', $v);
+            switch($line[0])
+            {
+                case "BROADCAST_DRIVER":
+                    $env[$k] = "BROADCAST_DRIVER=clarion_pusher";
+                    break;
+                case "PUSHER_APP_ID":
+                    $env[$k] = "PUSHER_APP_ID=".\Str::uuid();
+                    break;
+                case "PUSHER_APP_KEY":
+                    $env[$k] = "PUSHER_APP_KEY=".\Str::uuid();
+                    break;
+                case "PUSHER_APP_SECRET":
+                    $env[$k] = "PUSHER_APP_SECRET=".\Str::uuid();
+                    break;
+                default:
+                    break;
+            }
+        }
+        file_put_contents(base_path()."/.env", implode('\n',$env));
 
         \Artisan::call('vendor:publish', [
             '--provider' => 'MetaverseSystems\ClarionPHPBackend\ClarionPHPBackendProvider',

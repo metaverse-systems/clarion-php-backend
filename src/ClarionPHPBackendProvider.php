@@ -60,6 +60,22 @@ class ClarionPHPBackendProvider extends ServiceProvider
         \App::booted(function() {
             app('router')->get('/', function() { return view("clarion::index"); })->middleware('web');
             app('router')->get('/{any}', function() { return view("clarion::index"); })->middleware('web')->where('any', '^.*$');
+
+            $conns = config('broadcasting.connections');
+            $conns['clarion_pusher'] = [
+                'driver' => 'pusher',
+                'key' => env('PUSHER_APP_KEY'),
+                'secret' => env('PUSHER_APP_SECRET'),
+                'app_id' => env('PUSHER_APP_ID'),
+                'options' => [
+                    'cluster' => env('PUSHER_APP_CLUSTER'),
+                    'useTLS' => false,
+                    'host' => '0.0.0.0',
+                    'port' => 6001,
+                    'scheme' => 'http'
+                ]
+            ];
+            config(['broadcasting.connections' => $conns]);
         });
 
         $this->app->booted(function () {

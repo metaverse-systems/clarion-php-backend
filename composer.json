@@ -10,7 +10,8 @@
     ],
     "require": {
         "composer/composer": "^2.0",
-        "mouf/nodejs-installer": "^1.0"
+        "mouf/nodejs-installer": "^1.0",
+        "beyondcode/laravel-websockets": "^1.11"
     },
     "autoload": {
         "psr-4": {
