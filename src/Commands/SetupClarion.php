@@ -66,10 +66,11 @@ class SetupClarion extends Command
             file_put_contents(base_path()."/.env", $env);
         }
 
-        $env = explode('\n', file_get_contents(base_path()."/.env"));
+        $env = explode("\n", file_get_contents(base_path()."/.env"));
         foreach($env as $k=>$v)
         {
-            $line = explode('=', $v);
+            $line = explode("=", $v);
+
             switch($line[0])
             {
                 case "BROADCAST_DRIVER":
@@ -85,10 +86,11 @@ class SetupClarion extends Command
                     $env[$k] = "PUSHER_APP_SECRET=".\Str::uuid();
                     break;
                 default:
+                    print "No match\n";
                     break;
             }
         }
-        file_put_contents(base_path()."/.env", implode('\n',$env));
+        file_put_contents(base_path()."/.env", implode("\n", $env));
 
         \Artisan::call('vendor:publish', [
             '--provider' => 'MetaverseSystems\ClarionPHPBackend\ClarionPHPBackendProvider',
