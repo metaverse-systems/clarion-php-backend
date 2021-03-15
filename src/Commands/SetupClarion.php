@@ -86,7 +86,6 @@ class SetupClarion extends Command
                     $env[$k] = "PUSHER_APP_SECRET=".\Str::uuid();
                     break;
                 default:
-                    print "No match\n";
                     break;
             }
         }
